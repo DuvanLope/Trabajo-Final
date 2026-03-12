@@ -5,7 +5,6 @@ import plotly.express as px
 import streamlit as st
 
 st.title("Análisis de Riesgo de Diabetes")
-#-------
 
 st.write("""Este proyecto analiza un dataset de factores de riesgo de diabetes
 como edad, IMC, presión arterial y glucosa para identificar patrones
@@ -14,7 +13,6 @@ asociados al riesgo de desarrollar la enfermedad.
 #-------
 
 st.header("Objetivos")
-#-------
 
 st.write("""- Analizar factores de riesgo asociados a la diabetes.
 - Identificar patrones en variables como edad, glucosa y BMI.
@@ -22,21 +20,34 @@ st.write("""- Analizar factores de riesgo asociados a la diabetes.
 """)
 #-------
 
-@st.cache_data
-def load_data():
-    return pd.read_csv("diabetes_risk_dataset.csv")
-df = load_data()
-st.sidebar.header("Filtros")
-edad = st.sidebar.slider("Edad",int(df["age"].dropna().min()),int(df["age"].dropna().max()),(20,84))
-df = df[(df["age"] >= edad[0]) & (df["age"] <= edad[1])]
+df= pd.read_csv("diabetes_risk_dataset.csv")
+
+st.header("Dataframe")
+st.dataframe(df)
+ID_paciente = st.selectbox("Seleccionar paciente",df.index)
+st.write(df.loc[ID_paciente])
 #-------
+
+st.header("Filtros")
 
 @st.cache_data
 def load_data():
     return pd.read_csv("diabetes_risk_dataset.csv")
 df = load_data()
 st.sidebar.header("Filtros")
-imc = st.sidebar.slider("IMC",int(df["bmi"].dropna().min()),int(df["bmi"].dropna().max()),(20,84))
+min_age = int(df["age"].dropna().min())
+max_age = int(df["age"].dropna().max())
+edad = st.sidebar.slider("Edad", min_age, max_age, (min_age, max_age))
+df = df[(df["age"] >= edad[0]) & (df["age"] <= edad[1])]
+
+@st.cache_data
+def load_data():
+    return pd.read_csv("diabetes_risk_dataset.csv")
+df = load_data()
+st.sidebar.header("Filtros")
+min_bmi = float(df["bmi"].dropna().min())
+max_bmi = float(df["bmi"].dropna().max())
+imc = st.sidebar.slider("IMC",min_value=min_bmi,max_value=max_bmi,value=(min_bmi, max_bmi),step=0.1)
 df = df[(df["bmi"] >= imc[0]) & (df["bmi"] <= imc[1])]
 #-------
 
@@ -45,5 +56,26 @@ def load_data():
     return pd.read_csv("diabetes_risk_dataset.csv")
 df = load_data()
 st.sidebar.header("Filtros")
-edad = st.sidebar.slider("Edad",int(df["age"].dropna().min()),int(df["age"].dropna().max()),(20,84))
-df = df[(df["age"] >= edad[0]) & (df["age"] <= edad[1])]
+genero = st.sidebar.selectbox("Género",["Todos", "Female", "Male"])
+if genero == "Female":df = df[df["gender"] == 0]
+elif genero == "Male":df = df[df["gender"] == 1]
+#-------
+
+st.header("KPIs")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Total registros", len(df_filtrado))
+col2.metric("Edad promedio", round(df_filtrado["age"].mean(),1))
+col3.metric("IMC promedio", round(df_filtrado["bmi"].mean(),1))
+#-------
+
+st.subheader("Distribución de Edad")
+fig_age = px.histogram(df_filtrado,x="age",nbins=20,title="Distribución de Edad")
+st.plotly_chart(fig_age, use_container_width=True)
+
+
+
+
+
+
