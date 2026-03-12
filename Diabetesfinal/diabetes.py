@@ -21,17 +21,12 @@ st.write("""- Analizar factores de riesgo asociados a la diabetes.
 - Visualizar tendencias y distribución de los datos.
 """)
 #-------
+@st.cache_data
+def load_data():
+    return pd.read_csv("diabetes_risk_dataset.csv")
 
-st.header("Filtros")
-df = pd.read_csv("diabetes_risk_dataset.csv")
+df = load_data()
 st.sidebar.header("Filtros")
-edad = st.sidebar.slider("Edad",int(df["age"].min()),int(df["age"].max()),(20,60))
+edad = st.sidebar.slider("Edad",int(df["age"].dropna().min()),int(df["age"].dropna().max()),(20,84))
 df = df[(df["age"] >= edad[0]) & (df["age"] <= edad[1])]
-
-BMI
-nivel de glucosa
-resultado diabetes (0 / 1)
-#-------
-
-
 
