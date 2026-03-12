@@ -21,12 +21,29 @@ st.write("""- Analizar factores de riesgo asociados a la diabetes.
 - Visualizar tendencias y distribución de los datos.
 """)
 #-------
+
 @st.cache_data
 def load_data():
     return pd.read_csv("diabetes_risk_dataset.csv")
-
 df = load_data()
 st.sidebar.header("Filtros")
 edad = st.sidebar.slider("Edad",int(df["age"].dropna().min()),int(df["age"].dropna().max()),(20,84))
 df = df[(df["age"] >= edad[0]) & (df["age"] <= edad[1])]
+#-------
 
+@st.cache_data
+def load_data():
+    return pd.read_csv("diabetes_risk_dataset.csv")
+df = load_data()
+st.sidebar.header("Filtros")
+imc = st.sidebar.slider("IMC",int(df["bmi"].dropna().min()),int(df["bmi"].dropna().max()),(20,84))
+df = df[(df["bmi"] >= imc[0]) & (df["bmi"] <= imc[1])]
+#-------
+
+@st.cache_data
+def load_data():
+    return pd.read_csv("diabetes_risk_dataset.csv")
+df = load_data()
+st.sidebar.header("Filtros")
+edad = st.sidebar.slider("Edad",int(df["age"].dropna().min()),int(df["age"].dropna().max()),(20,84))
+df = df[(df["age"] >= edad[0]) & (df["age"] <= edad[1])]
